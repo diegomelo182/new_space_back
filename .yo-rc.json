@@ -1,0 +1,14 @@
+{
+  "generator-kraken": {
+    "taskModule": "grunt",
+    "lintModule": "eslint",
+    "description": "Newspace Back",
+    "author": "Diego Melo",
+    "templateModule": "makara",
+    "i18n": false,
+    "componentPackager": "bower",
+    "cssModule": false,
+    "jsModule": "requirejs",
+    "useJson": null
+  }
+}

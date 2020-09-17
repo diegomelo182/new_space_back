@@ -4,12 +4,21 @@ function findMatrixItem(matrix, itemToFind) {
     var finded = false;
     for (var index = 0; index < matrix.length; index++) {
         var element = matrix[index];
-        if (element[0] == itemToFind[0] && element[1] == itemToFind[1]) {
+        if (parseInt(element[0]) == parseInt(itemToFind[0]) && parseInt(element[1]) == parseInt(itemToFind[1])) {
             finded = true;
             break;
         }
     }
     return finded;
+}
+
+function checkCloudPosition(rowLength, colLength, rowIndex, colIndex) {
+    return {
+        up: rowIndex > 0,
+        down: rowIndex < (rowLength - 1),
+        left: colIndex > 0,
+        right: colIndex < (colLength - 1)
+    }
 }
 
 var functions = {
@@ -57,6 +66,44 @@ var functions = {
         }
 
         return changedMatrix;
+    },
+    generateClouds: function(matrix) {
+        var cloudOverAirport = false;
+        var changedMatrix = matrix;
+        var cloudPoints = [];
+
+        for (var rowIndex = 0; rowIndex < matrix.length; rowIndex++) {
+            var row = matrix[rowIndex];
+            for (var colIndex = 0; colIndex < row.length; colIndex++) {
+                var col = row[colIndex];
+                if (col != 'C') continue;
+
+                var addCloud = checkCloudPosition(matrix.length, row.length, rowIndex, colIndex);
+                if (addCloud.up && !findMatrixItem(cloudPoints, [rowIndex-1, +colIndex])) {
+                    if (matrix[parseInt(rowIndex-1)][parseInt(+colIndex)] === 'A') cloudOverAirport = true;
+                    cloudPoints.push([rowIndex-1, +colIndex]);
+                }
+                if (addCloud.down && !findMatrixItem(cloudPoints, [rowIndex+1, colIndex])) {
+                    if (matrix[parseInt(rowIndex+1)][parseInt(colIndex)] === 'A') cloudOverAirport = true;
+                    cloudPoints.push([rowIndex+1, +colIndex]);
+                }
+                if (addCloud.left && !findMatrixItem(cloudPoints, [rowIndex, colIndex-1])) {
+                    if (matrix[parseInt(rowIndex)][parseInt(colIndex-1)] === 'A') cloudOverAirport = true;
+                    cloudPoints.push([rowIndex, colIndex-1]);
+                }
+                if (addCloud.right && !findMatrixItem(cloudPoints, [rowIndex, colIndex+1])) {
+                    if (matrix[parseInt(rowIndex)][parseInt(colIndex+1)] === 'A') cloudOverAirport = true;
+                    cloudPoints.push([rowIndex, colIndex+1]);
+                }
+            }
+        }
+
+        for (var index = 0; index < cloudPoints.length; index++) {
+            var element = cloudPoints[index];
+            changedMatrix[parseInt(element[0])][parseInt(element[1])] = 'C';
+        }
+
+        return { cloudOverAirport: cloudOverAirport, matrix: changedMatrix };
     }
 };
 
